@@ -42,7 +42,7 @@ export default {
         .attr("stroke", "#fff")
         .attr("stroke-linejoin", "round")
         .attr("stroke-linecap", "round")
-        .attr("d", path);
+        .attr("d", path); 
 
       const stateCapitalElements = svg.selectAll("g").data(data).join("g");
 
@@ -54,7 +54,11 @@ export default {
             `translate(${projection([longitude, latitude]).join(",")})`
         );
 
-      capitalGroups.append("circle").attr("r", 2).attr("fill", "red"); // Add fill color for circle dots
+      capitalGroups
+        .append("circle")
+        .attr("r", 2)
+        .attr("fill", "red"); // Add fill color for circle dots
+
       console.log("descr->", data);
       // Adjust the text positioning
       capitalGroups
@@ -63,6 +67,13 @@ export default {
         .attr("font-size", 11)
         .attr("text-anchor", "middle")
         .attr("fill", "red")
+        .on("mouseover", function (d, i) {
+          d3.select(this).transition().duration("100").attr("font-size", 18);
+        })
+        .on("mouseout", function (d, i) {
+          d3.select(this).transition().duration("200").attr("font-size", 11);
+        })
+        .style("cursor", "pointer") // Set cursor style to pointer
         .text(({ description }) => description);
     });
   },
