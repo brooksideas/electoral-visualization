@@ -1,10 +1,12 @@
 <script>
 import { ref } from "vue";
-import ResponsiveMap from "./ResponsiveMap.vue";
+import ResponsiveStateMap from "./ResponsiveStateMap.vue";
+import ResponsiveCityMap from "./ResponsiveCityMap.vue";
 export default {
   name: "Home",
   components: {
-    ResponsiveMap,
+    ResponsiveStateMap,
+    ResponsiveCityMap
   },
   setup() {
     const description = ref("Electoral Visualization");
@@ -18,7 +20,8 @@ export default {
 <template>
   <div id="app">
     <h1>{{ description }}</h1>
-    <responsive-map />
+    <!-- <responsive-state-map /> -->
+    <responsive-city-map />
   </div>
 </template>
 
