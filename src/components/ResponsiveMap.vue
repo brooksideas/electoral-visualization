@@ -10,8 +10,8 @@ import { onMounted } from "vue";
 export default {
   setup() {
     onMounted(() => {
-      const width = 900;
-      const height = 450;
+      const width = 975;
+      const height = 610;
       // const margin = { top: 50, bottom: 50, left: 50, right: 50 };
 
       const svg = d3
@@ -26,7 +26,7 @@ export default {
       const projection = d3
         .geoAlbersUsa()
         .translate([width / 2, height / 2]) // Translate to the center of SVG
-        .scale([1000]); // Scale the projection
+        .scale([1300]); // Scale the projection to 1300 for my screen
 
       // Assuming 'us' and 'data' are defined elsewhere
       svg
@@ -60,7 +60,7 @@ export default {
       capitalGroups
         .append("text")
         .attr("font-family", "sans-serif")
-        .attr("font-size", 10)
+        .attr("font-size", 11)
         .attr("text-anchor", "middle")
         .attr("fill", "red")
         .text(({ description }) => description);

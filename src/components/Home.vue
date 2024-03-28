@@ -1,10 +1,10 @@
 <script>
 import { ref } from "vue";
-import ResponsiveLineChart from "./ResponsiveLineChart.vue";
+import ResponsiveMap from "./ResponsiveMap.vue";
 export default {
   name: "Home",
   components: {
-    ResponsiveLineChart,
+    ResponsiveMap,
   },
   setup() {
     const description = ref("Electoral Visualization");
@@ -18,7 +18,7 @@ export default {
 <template>
   <div id="app">
     <h1>{{ description }}</h1>
-    <responsive-line-chart />
+    <responsive-map />
   </div>
 </template>
 
