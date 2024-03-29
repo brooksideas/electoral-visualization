@@ -1,12 +1,14 @@
 <script>
 import { ref } from "vue";
+import DisplayOptionsList from "./DisplayOptionsList.vue";
 import ResponsiveStateMap from "./ResponsiveStateMap.vue";
 import ResponsiveCityMap from "./ResponsiveCityMap.vue";
 export default {
   name: "Home",
   components: {
+    DisplayOptionsList,
     ResponsiveStateMap,
-    ResponsiveCityMap
+    ResponsiveCityMap,
   },
   setup() {
     const description = ref("Electoral Visualization");
@@ -18,15 +20,23 @@ export default {
 </script>
 
 <template>
-  <div id="app">
-    <h1>{{ description }}</h1>
-    <!-- <responsive-state-map /> -->
-    <responsive-city-map />
+  <div id="app" >
+    <div class="grid grid-cols-12 gap-4 content-start items-center">
+      <div class="flex justify-center col-span-1 w-full">
+        <display-options-list/>
+      </div>
+      <div class="col-span-3 col-span-10 w-3/4">
+        <h1>{{ description }}</h1>
+        <!-- <responsive-state-map /> -->
+        <responsive-city-map />
+      </div>
+      <div class="flex justify-center col-span-1 w-1/6">03</div>
+    </div>
   </div>
 </template>
 
 <style scoped>
 .read-the-docs {
   color: #888;
-}
+} 
 </style>
