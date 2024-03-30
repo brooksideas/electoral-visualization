@@ -22,8 +22,12 @@
     </div>
   </div> -->
 
-  <div class="grid grid-cols-1 gap-4 ml-12 mt-[-64px]">
+  <!-- <div class="grid grid-cols-1 gap-4 ml-12 mt-[-64px]">
     <dropdown-options-list />
+  </div> -->
+
+  <div class="grid grid-cols-1 gap-4 ml-12 mt-[-64px]">
+    <slider-options-list />
   </div>
 </template>
   
@@ -31,11 +35,13 @@
 import { ref, computed } from "vue";
 import { colors } from "../constants/colors";
 import DropdownOptionsList from "./DropdownOptionsList.vue";
+import SliderOptionsList from "./SliderOptionsList.vue";
 
 export default {
   name: "DisplaySelectionList",
   components: {
     DropdownOptionsList,
+    SliderOptionsList
   },
   setup() {
     // List of color names

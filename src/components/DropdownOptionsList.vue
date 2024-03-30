@@ -100,7 +100,7 @@ export default {
 
     const selectYear = (year) => {
       selectedYear.value = year;
-      console.log("Selected year:", year);
+      // console.log("Selected year:", year);
       open.value = false;
     };
 
