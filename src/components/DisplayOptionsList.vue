@@ -2,7 +2,9 @@
   <div class="flex flex-col items-start space-y-4 nav-margin">
     <!-- Iterate over display options and render list items -->
     <div class="flex flex-col flex-1 overflow-y-auto">
-      <nav class="flex-1 px-2 py-4 nav-background rounded shadow-2xl hover:shadow-xl shadow-inner focus:shadow-xl">
+      <nav
+        class="flex-1 px-2 py-4 nav-background rounded shadow-2xl hover:shadow-xl shadow-inner focus:shadow-xl"
+      >
         <a
           href="#"
           class="flex items-center px-4 py-2 text-gray-800 hover:nav-background hover:font-bold transition duration-300 shadow-md hover:shadow-xl focus:shadow-xl"
@@ -77,15 +79,6 @@
         </a>
       </nav>
     </div>
-    <!-- <div
-        v-for="option in displayOptions"
-        :key="option.id"
-        @click="selectOption(option)"
-        :class="{ 'bg-blue-200': selectedOption === option }"
-        class="cursor-pointer p-2 rounded-md transition-colors duration-300"
-      >
-        {{ option.name }}
-      </div> -->
   </div>
 </template>
   
@@ -118,7 +111,7 @@ const selectOption = (option) => {
 }
 
 .nav-background {
-    background-color: #bfbfbf !important;
+  background-color: #bfbfbf !important;
 }
 </style>
   
