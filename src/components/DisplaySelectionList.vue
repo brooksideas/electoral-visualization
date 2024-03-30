@@ -26,22 +26,36 @@
     <dropdown-options-list />
   </div> -->
 
-  <div class="grid grid-cols-1 gap-4 ml-12 mt-[-64px]">
+  <!-- <div class="grid grid-cols-1 gap-4 ml-12 mt-[-64px]">
     <slider-options-list />
+  </div> -->
+
+  <div class="grid grid-cols-1 gap-4 ml-12 mt-[-64px]">
+    <year-slider-options-list />
+    <div v-for="average in averages" :key="average" class="flex">
+      <button
+        type="button"
+        class="inline-block w-[300px] px-3 py-2 gap-4 text-white font-semibold rounded-md shadow-md bg-slate-500 hover:bg-slate-600 focus:outline-none focus:ring-2 focus:ring-slate-400 focus:ring-opacity-50"
+      >
+        {{ average }}
+      </button>
+    </div>
   </div>
 </template>
   
   <script>
-import { ref, computed } from "vue";
+import { ref } from "vue";
 import { colors } from "../constants/colors";
 import DropdownOptionsList from "./DropdownOptionsList.vue";
 import SliderOptionsList from "./SliderOptionsList.vue";
+import YearSliderOptionsList from "./YearSliderOptionsList.vue";
 
 export default {
   name: "DisplaySelectionList",
   components: {
     DropdownOptionsList,
-    SliderOptionsList
+    SliderOptionsList,
+    YearSliderOptionsList,
   },
   setup() {
     // List of color names
@@ -50,6 +64,9 @@ export default {
 
     // Years list
     const years = ref([2008, 2010, 2012, 2014, 2016, 2018, 2020, 2022]);
+
+    // Average Count display
+    const averages = ref(["Candidate count", "Total votes count"]);
 
     // // Random value returned
     const getRandomFromArray = (arr) => {
@@ -67,7 +84,7 @@ export default {
       return `${randomColorValue}`;
     };
 
-    return { years, getRandomColorCombination };
+    return { years, averages, getRandomColorCombination };
   },
 };
 </script>
