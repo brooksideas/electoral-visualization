@@ -27,20 +27,20 @@ export default {
       <div class="flex justify-center col-span-1 w-full">
         <display-options-list />
       </div>
-      <div class="col-span-10 w-3/4">
+      <div class="col-span-8">
         <h1>{{ description }}</h1>
         <responsive-state-map />
         <!-- <responsive-city-map /> -->
       </div>
-      <div class="flex justify-center col-span-1 w-1/6">
+      <div class="flex justify-center col-span-3 ml-12">
         <display-selection-list />
       </div>
     </div>
   </div>
 </template>
 
-<style scoped>
-.read-the-docs {
-  color: #888;
+<style>
+#app {
+  max-width: 1400px !important;
 }
 </style>

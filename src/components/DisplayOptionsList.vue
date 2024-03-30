@@ -106,8 +106,7 @@ const selectOption = (option) => {
   <style>
 .nav-margin {
   margin-top: -100px !important;
-  margin-left: -400px !important;
-  /* width: 300px; */
+  margin-left: -200px !important;
 }
 
 .nav-background {
