@@ -11,7 +11,7 @@
   </div> -->
 
   <!-- This is for the Contribution Data -->
-  <div class="grid grid-cols-3 gap-4 ml-16">
+  <!-- <div class="grid grid-cols-3 gap-4 ml-16">
     <div v-for="year in years" :key="year">
       <button
         type="button"
@@ -20,14 +20,23 @@
         {{ year }}
       </button>
     </div>
+  </div> -->
+
+  <div class="grid grid-cols-1 gap-4 ml-12 mt-[-64px]">
+    <dropdown-options-list />
   </div>
 </template>
   
   <script>
 import { ref, computed } from "vue";
 import { colors } from "../constants/colors";
+import DropdownOptionsList from "./DropdownOptionsList.vue";
+
 export default {
   name: "DisplaySelectionList",
+  components: {
+    DropdownOptionsList,
+  },
   setup() {
     // List of color names
     const colorsList = Object.keys(colors);
