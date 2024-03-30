@@ -3,6 +3,7 @@ import { ref, onMounted, onBeforeUnmount } from "vue";
 import DisplayOptionsList from "./DisplayOptionsList.vue";
 import ResponsiveStateMap from "./ResponsiveStateMap.vue";
 import ResponsiveCityMap from "./ResponsiveCityMap.vue";
+import ResponsiveChart from "./ResponsiveChart.vue";
 import DisplaySelectionList from "./DisplaySelectionList.vue";
 export default {
   name: "Home",
@@ -10,6 +11,7 @@ export default {
     DisplayOptionsList,
     ResponsiveStateMap,
     ResponsiveCityMap,
+    ResponsiveChart,
     DisplaySelectionList,
   },
   setup() {
@@ -49,8 +51,9 @@ export default {
         :class="{ 'col-span-8': !isSmallScreen, 'col-span-12': isSmallScreen }"
       >
         <h1>{{ description }}</h1>
-        <responsive-state-map />
+        <!-- <responsive-state-map /> -->
         <!-- <responsive-city-map /> -->
+        <responsive-chart/>
       </div>
       <div
         class="flex justify-center ml-12"
