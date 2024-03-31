@@ -1,5 +1,5 @@
 <script>
-import { ref, onMounted, onBeforeUnmount } from "vue";
+import { inject, ref, onMounted, onBeforeUnmount } from "vue";
 import DisplayOptionsList from "./DisplayOptionsList.vue";
 import ResponsiveStateMap from "./ResponsiveStateMap.vue";
 import ResponsiveCityMap from "./ResponsiveCityMap.vue";
@@ -15,6 +15,19 @@ export default {
     DisplaySelectionList,
   },
   setup() {
+    // SAMPLE
+    // Inject the Event Bus
+    const bus = inject("$bus");
+
+    // const emitEvent = () => {
+    //   bus.emit("eventName", eventData);
+    // };
+
+    // Listen for Count event Button 
+    // bus.on("countEvt", (eventData) => {
+    //   // Handle the event
+    //   console.log("Listening on Parent ->", eventData);
+    // });
     const description = ref("Electoral Visualization");
     const isSmallScreen = ref(window.innerWidth < 1400);
 
@@ -43,7 +56,10 @@ export default {
     <div class="grid grid-cols-12 gap-4 content-start items-center">
       <div
         class="flex justify-center w-full"
-        :class="{ 'col-span-1': !isSmallScreen, 'col-span-12 mt-32': isSmallScreen }"
+        :class="{
+          'col-span-1': !isSmallScreen,
+          'col-span-12 mt-32': isSmallScreen,
+        }"
       >
         <display-options-list />
       </div>
@@ -51,9 +67,9 @@ export default {
         :class="{ 'col-span-8': !isSmallScreen, 'col-span-12': isSmallScreen }"
       >
         <h1>{{ description }}</h1>
-        <!-- <responsive-state-map /> -->
+        <responsive-state-map />
         <!-- <responsive-city-map /> -->
-        <responsive-chart/>
+        <!-- <responsive-chart/> -->
       </div>
       <div
         class="flex justify-center ml-12"
