@@ -29,9 +29,28 @@ export default {
   components: { Bar },
   setup() {
     const chartData = reactive({
-      labels: ["January", "February", "March"],
+      labels: [1980, 1985, 1990, 1995, 2000, 2005, 2010, 2015, 2020],
       datasets: [
-        { label: "Months", data: [40, 20, 12], backgroundColor: "#14b8a6" },
+        {
+          label: "LIBERAL",
+          data: [50, 78, 23, 34, 89, 32, 67, 44, 56],
+          backgroundColor: "#3b82f6",
+        },
+        {
+          label: "CONSERVATIVE",
+          data: [
+            100 - 50,
+            100 - 78,
+            100 - 23,
+            100 - 34,
+            100 - 89,
+            100 - 32,
+            100 - 67,
+            100 - 44,
+            100 - 56,
+          ],
+          backgroundColor: "#ef4444",
+        },
       ],
     });
     const chartOptions = reactive({
