@@ -7,6 +7,7 @@
       >
         <a
           href="#"
+          @click="renderView(views.HOUSE)"
           class="flex items-center px-4 py-2 text-gray-800 hover:nav-background hover:font-bold transition duration-300 shadow-md hover:shadow-xl focus:shadow-xl"
         >
           <svg
@@ -31,6 +32,7 @@
         </a>
         <a
           href="#"
+          @click="renderView(views.FUNDING)"
           class="flex items-center px-4 py-2 mt-2 text-gray-800 hover:nav-background hover:font-bold transition duration-300 shadow-md hover:shadow-xl focus:shadow-xl"
         >
           <svg
@@ -55,6 +57,7 @@
         </a>
         <a
           href="#"
+          @click="renderView(views.CHARTS)"
           class="flex items-center px-4 py-2 mt-2 text-gray-800 hover:nav-background hover:font-bold transition duration-300 shadow-md hover:shadow-xl focus:shadow-xl"
         >
           <svg
@@ -82,24 +85,41 @@
   </div>
 </template>
   
-  <script setup>
-import { ref } from "vue";
+  
+<script>
+import { inject } from "vue";
+import { views } from "../constants/views";
+export default {
+  name: "Display Options List",
+  setup() {
+    /*
+    // Define display options
+    const displayOptions = ref([
+      { id: 1, name: "House", component: "responsive-state-map" },
+      { id: 2, name: "City", component: "responsive-city-map" },
+      // Add more display options as needed
+    ]);
 
-// Define display options
-const displayOptions = ref([
-  { id: 1, name: "House", component: "responsive-state-map" },
-  { id: 2, name: "City", component: "responsive-city-map" },
-  // Add more display options as needed
-]);
+    // Track the selected display option
+    const selectedOption = ref(null);
 
-// Track the selected display option
-const selectedOption = ref(null);
+    // Method to select an option
+    const selectOption = (option) => {
+      selectedOption.value = option;
+      // Emit an event to inform the parent component about the selected option
+      emit("option-selected", option.component);
+    };
+*/
 
-// Method to select an option
-const selectOption = (option) => {
-  selectedOption.value = option;
-  // Emit an event to inform the parent component about the selected option
-  emit("option-selected", option.component);
+    // Inject the Event Bus
+    const bus = inject("$bus");
+
+    // Get the switch case to redirect to the corresponding pages accordingly
+    const renderView = (render) => {
+      bus.emit("renderEvt", render);
+    };
+    return { views, renderView };
+  },
 };
 </script>
   

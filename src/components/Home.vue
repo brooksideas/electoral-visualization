@@ -1,5 +1,6 @@
 <script>
-import { inject, ref, onMounted, onBeforeUnmount } from "vue";
+import { inject, ref, onMounted, onBeforeUnmount, computed } from "vue";
+import { views } from "../constants/views";
 import DisplayOptionsList from "./DisplayOptionsList.vue";
 import ResponsiveStateMap from "./ResponsiveStateMap.vue";
 import ResponsiveCityMap from "./ResponsiveCityMap.vue";
@@ -15,25 +16,35 @@ export default {
     DisplaySelectionList,
   },
   setup() {
-    // SAMPLE
     // Inject the Event Bus
     const bus = inject("$bus");
 
-    // const emitEvent = () => {
-    //   bus.emit("eventName", eventData);
-    // };
+    // Display view
+    const displayView = ref(views.HOUSE);
 
-    // Listen for Count event Button 
-    // bus.on("countEvt", (eventData) => {
-    //   // Handle the event
-    //   console.log("Listening on Parent ->", eventData);
-    // });
-    const description = ref("Electoral Visualization");
+    // Listen for view render Event
+    bus.on("renderEvt", (renderEvt) => {
+      displayView.value = renderEvt;
+    });
+
+    const title = ref("Electoral Visualization");
+    const description = ref("House Data Visualization");
     const isSmallScreen = ref(window.innerWidth < 1400);
 
     const handleResize = () => {
       isSmallScreen.value = window.innerWidth < 1400;
     };
+
+    const handleDescriptionRender = computed(() => {
+      switch (displayView.value) {
+        case views.HOUSE:
+          return "House Data Visualization";
+        case views.FUNDING:
+          return "Funding Data Visualization";
+        case views.CHARTS:
+          return "Votes count Visualization";
+      }
+    });
 
     onMounted(() => {
       window.addEventListener("resize", handleResize);
@@ -44,8 +55,12 @@ export default {
     });
 
     return {
+      views,
+      title,
       description,
+      displayView,
       isSmallScreen,
+      handleDescriptionRender,
     };
   },
 };
@@ -66,10 +81,11 @@ export default {
       <div
         :class="{ 'col-span-8': !isSmallScreen, 'col-span-12': isSmallScreen }"
       >
-        <h1>{{ description }}</h1>
-        <responsive-state-map />
-        <!-- <responsive-city-map /> -->
-        <!-- <responsive-chart/> -->
+        <h1>{{ title }}</h1>
+        <h2>{{ handleDescriptionRender }}</h2>
+        <responsive-state-map v-if="displayView == views.HOUSE" />
+        <responsive-city-map v-if="displayView == views.FUNDING" />
+        <responsive-chart v-if="displayView == views.CHARTS" />
       </div>
       <div
         class="flex justify-center ml-12"
