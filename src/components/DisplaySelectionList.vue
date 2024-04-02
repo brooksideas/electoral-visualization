@@ -1,6 +1,9 @@
 <template>
   <!-- Page 1 ,This is for the House Data Party selection   -->
-  <div class="grid grid-cols-12 gap-4 ml-12 mt-[-64px]">
+  <div
+    v-if="displayView == views.HOUSE"
+    class="grid grid-cols-12 gap-4 ml-12 mt-[-64px]"
+  >
     <div class="col-span-12 gap-4 ml-12 mt-[-64px]">
       <dropdown-options-list />
     </div>
@@ -20,23 +23,27 @@
   </div>
 
   <!-- Page 2 ,  This is for the Contribution Data -->
-  <!-- <div class="grid grid-cols-3 gap-4 ml-16">
-    <div v-for="year in years" :key="year">
-      <button
-        type="button"
-        class="inline-block px-3 py-2 gap-4 text-white font-semibold rounded-md shadow-md bg-slate-500 hover:bg-slate-600 focus:outline-none focus:ring-2 focus:ring-slate-400 focus:ring-opacity-50"
-      >
-        {{ year }}
-      </button>
+  <div v-if="displayView == views.FUNDING" class="grid grid-cols-12">
+    <div class="col-span-12 gap-4 ml-12 mb-12">
+      <div class="grid grid-cols-12">
+        <div class="col-span-4" v-for="year in years" :key="year">
+          <button
+            type="button"
+            class="inline-block px-3 py-2 mx-4 my-4 gap-4 text-white font-semibold rounded-md shadow-md bg-slate-500 hover:bg-slate-600 focus:outline-none focus:ring-2 focus:ring-slate-400 focus:ring-opacity-50"
+          >
+            {{ year }}
+          </button>
+        </div>
+      </div>
     </div>
-  </div> -->
 
-  <!-- <div class="grid grid-cols-1 gap-4 ml-12 mt-[-64px]">
-    <slider-options-list />
-  </div> -->
+    <div class="col-span-12 gap-4 ml-12">
+      <slider-options-list />
+    </div>
+  </div>
 
   <!-- Page 3 , Slider for candidate / total votes count  -->
-  <!-- <div class="grid grid-cols-1 gap-4 ml-12 mt-[-64px]">
+  <div v-if="displayView == views.CHARTS" class="grid grid-cols-1 gap-4 ml-12 mt-[-64px]">
     <year-slider-options-list />
     <div v-for="average in averages" :key="average" class="flex">
       <button
@@ -46,11 +53,12 @@
         {{ average }}
       </button>
     </div>
-  </div> -->
+  </div>
 </template>
   
   <script>
-import { ref } from "vue";
+import { inject, ref } from "vue";
+import { views } from "../constants/views";
 import { colors } from "../constants/colors";
 import DropdownOptionsList from "./DropdownOptionsList.vue";
 import SliderOptionsList from "./SliderOptionsList.vue";
@@ -64,6 +72,17 @@ export default {
     YearSliderOptionsList,
   },
   setup() {
+    // Inject the Event Bus
+    const bus = inject("$bus");
+
+    // Display view
+    const displayView = ref(views.HOUSE);
+
+    // Listen for view render Event
+    bus.on("renderEvt", (renderEvt) => {
+      displayView.value = renderEvt;
+    });
+
     // List of color names
     const colorsList = Object.keys(colors);
     const shadeList = [50, 100, 200, 300, 400, 500, 600, 700, 800, 900, 950];
@@ -106,7 +125,14 @@ export default {
       return randomParty;
     };
 
-    return { years, averages, getRandomParty, getRandomColorCombination };
+    return {
+      views,
+      years,
+      averages,
+      displayView,
+      getRandomParty,
+      getRandomColorCombination,
+    };
   },
 };
 </script>
