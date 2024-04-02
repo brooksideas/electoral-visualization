@@ -1,6 +1,7 @@
 <template>
   <div class="relative" @click="toggleDropdown">
     <button
+      ref="dropdownButtonRef"
       type="button"
       class="inline-flex justify-between w-56 px-4 py-2 text-sm font-medium text-white bg-gray-800 rounded-md shadow-sm hover:bg-gray-700 focus:outline-none focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-opacity-75"
       aria-haspopup="listbox"
@@ -23,6 +24,7 @@
     </button>
 
     <div
+      ref="dropdownListRef"
       v-show="open"
       class="absolute z-10 w-full mt-1 bg-white shadow-lg"
       style="display: none"
@@ -72,13 +74,15 @@
 </template>
   
   <script>
-import { ref, onMounted } from "vue";
+import { ref, onMounted, watch } from "vue";
 
 export default {
   setup() {
     const open = ref(false);
     const selectedYear = ref(null);
     const years = ref([]);
+    const dropdownButtonRef = ref(null);
+    const dropdownListRef = ref(null);
 
     const toggleDropdown = () => {
       open.value = !open.value;
@@ -108,12 +112,22 @@ export default {
       generateYears();
     });
 
+    // Watch for changes in the dropdown's visibility and adjust button width
+    watch(open, () => {
+      if (open.value) {
+        const buttonWidth = dropdownButtonRef.value.offsetWidth;
+        dropdownListRef.value.style.width = buttonWidth + "px";
+      }
+    });
+
     return {
       open,
       selectedYear,
       years,
       toggleDropdown,
       selectYear,
+      dropdownButtonRef,
+      dropdownListRef,
     };
   },
 };
