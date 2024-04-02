@@ -1,16 +1,25 @@
 <template>
-  <!-- This is for the House Data Party selection   -->
-  <!-- <div class="grid grid-cols-1 gap-4 ml-12">
-    <div v-for="i in 10" :key="i">
-      <button
-        type="button"
-        class="w-4 h-4 rounded-full"
-        :style="{ 'background-color': getRandomColorCombination() }"
-      ></button>
+  <!-- Page 1 ,This is for the House Data Party selection   -->
+  <div class="grid grid-cols-12 gap-4 ml-12 mt-[-64px]">
+    <div class="col-span-12 gap-4 ml-12 mt-[-64px]">
+      <dropdown-options-list />
     </div>
-  </div> -->
+    <div class="col-span-8">
+      <div v-for="i in 10" :key="i" class="w-full my-2">
+        <button
+          type="button"
+          class="w-4 h-4 rounded-full overflow-visible whitespace-nowrap relative"
+          :style="{ 'background-color': getRandomColorCombination() }"
+        >
+          <span class="absolute top-[-2px] left-[48px]">{{
+            getRandomParty()
+          }}</span>
+        </button>
+      </div>
+    </div>
+  </div>
 
-  <!-- This is for the Contribution Data -->
+  <!-- Page 2 ,  This is for the Contribution Data -->
   <!-- <div class="grid grid-cols-3 gap-4 ml-16">
     <div v-for="year in years" :key="year">
       <button
@@ -23,14 +32,11 @@
   </div> -->
 
   <!-- <div class="grid grid-cols-1 gap-4 ml-12 mt-[-64px]">
-    <dropdown-options-list />
-  </div> -->
-
-  <!-- <div class="grid grid-cols-1 gap-4 ml-12 mt-[-64px]">
     <slider-options-list />
   </div> -->
 
-  <div class="grid grid-cols-1 gap-4 ml-12 mt-[-64px]">
+  <!-- Page 3 , Slider for candidate / total votes count  -->
+  <!-- <div class="grid grid-cols-1 gap-4 ml-12 mt-[-64px]">
     <year-slider-options-list />
     <div v-for="average in averages" :key="average" class="flex">
       <button
@@ -40,7 +46,7 @@
         {{ average }}
       </button>
     </div>
-  </div>
+  </div> -->
 </template>
   
   <script>
@@ -61,8 +67,18 @@ export default {
     // List of color names
     const colorsList = Object.keys(colors);
     const shadeList = [50, 100, 200, 300, 400, 500, 600, 700, 800, 900, 950];
-
-    // Years list
+    const partyList = [
+      "LIBERAL",
+      "CONSERVATIVE",
+      "RIGHT TO LIFE",
+      "WOMEN'S EQUALITY",
+      "WORKING FAMILIES",
+      "AMERICAN FIRST POPULIST",
+      "PEACE AND FREEDOM",
+      "A CONNECTICUT PARTY",
+      "NATURAL LAW",
+      "U.S. TAXPAYERS",
+    ];
     const years = ref([2008, 2010, 2012, 2014, 2016, 2018, 2020, 2022]);
 
     // Average Count display
@@ -84,7 +100,13 @@ export default {
       return `${randomColorValue}`;
     };
 
-    return { years, averages, getRandomColorCombination };
+    // get random states
+    const getRandomParty = () => {
+      const randomParty = getRandomFromArray(partyList);
+      return randomParty;
+    };
+
+    return { years, averages, getRandomParty, getRandomColorCombination };
   },
 };
 </script>
@@ -93,6 +115,9 @@ export default {
 .display-party-margin {
   margin-top: 100px !important;
   margin-left: 1500px !important;
+}
+.overflow-visible {
+  overflow: visible;
 }
 </style>
   

@@ -4,7 +4,6 @@
   <script>
 import * as d3 from "d3";
 import * as topojson from "topojson-client";
-import city from "../data/city.json";
 import cities from "../data/cities.json";
 import us from "../data/us.json";
 import { onMounted } from "vue";
