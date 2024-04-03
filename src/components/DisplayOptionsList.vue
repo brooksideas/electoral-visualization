@@ -8,7 +8,11 @@
         <a
           href="#"
           @click="renderView(views.HOUSE)"
-          class="flex items-center px-4 py-2 text-gray-800 hover:nav-background hover:font-bold transition duration-300 shadow-md hover:shadow-xl focus:shadow-xl"
+          class="flex items-center px-4 py-2 hover:nav-background hover:font-bold transition duration-300 shadow-md hover:shadow-xl focus:shadow-xl"
+          :class="{
+            'text-gray-800': !toggleActiveOption(views.HOUSE),
+            'text-purple-700': toggleActiveOption(views.HOUSE),
+          }"
         >
           <svg
             class="h-6 w-6 mr-2"
@@ -33,7 +37,11 @@
         <a
           href="#"
           @click="renderView(views.FUNDING)"
-          class="flex items-center px-4 py-2 mt-2 text-gray-800 hover:nav-background hover:font-bold transition duration-300 shadow-md hover:shadow-xl focus:shadow-xl"
+          class="flex items-center px-4 py-2 mt-2 hover:nav-background hover:font-bold transition duration-300 shadow-md hover:shadow-xl focus:shadow-xl"
+          :class="{
+            'text-gray-800': !toggleActiveOption(views.FUNDING),
+            'text-purple-700': toggleActiveOption(views.FUNDING),
+          }"
         >
           <svg
             class="h-6 w-6 mr-2"
@@ -58,7 +66,11 @@
         <a
           href="#"
           @click="renderView(views.CHARTS)"
-          class="flex items-center px-4 py-2 mt-2 text-gray-800 hover:nav-background hover:font-bold transition duration-300 shadow-md hover:shadow-xl focus:shadow-xl"
+          class="flex items-center px-4 py-2 mt-2 hover:nav-background hover:font-bold transition duration-300 shadow-md hover:shadow-xl focus:shadow-xl"
+          :class="{
+            'text-gray-800': !toggleActiveOption(views.CHARTS),
+            'text-purple-700': toggleActiveOption(views.CHARTS),
+          }"
         >
           <svg
             class="h-6 w-6 mr-2"
@@ -87,7 +99,7 @@
   
   
 <script>
-import { inject } from "vue";
+import { inject, ref } from "vue";
 import { views } from "../constants/views";
 export default {
   name: "Display Options List",
@@ -114,11 +126,19 @@ export default {
     // Inject the Event Bus
     const bus = inject("$bus");
 
+    const displayView = ref(views.HOUSE);
+
     // Get the switch case to redirect to the corresponding pages accordingly
     const renderView = (render) => {
+      displayView.value = render; // set this to control the active list option
       bus.emit("renderEvt", render);
     };
-    return { views, renderView };
+
+    // Toggle the Active state of the Options
+    const toggleActiveOption = (activeOption) => {
+      return activeOption === displayView.value;
+    };
+    return { views, displayView, renderView, toggleActiveOption };
   },
 };
 </script>
