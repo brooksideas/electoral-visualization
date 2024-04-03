@@ -1,19 +1,21 @@
 <template>
   <div id="d3-container"></div>
 </template>
+
 <script>
 import * as d3 from "d3";
 import * as topojson from "topojson-client";
 import data from "../data/data.json";
 import us from "../data/us.json";
 import { ref, onMounted } from "vue";
+
 export default {
   setup() {
     // point color
     const pointColor = ref("blue");
 
     // tooltip color as passed from event bus
-    const tooltipColor = ref("black");
+    const tooltipColor = ref("#14b8a6");
 
     // text color
     const textColor = ref("red");
@@ -62,10 +64,10 @@ export default {
             `translate(${projection([longitude, latitude]).join(",")})`
         )
         .on("mouseover", function (evt, d) {
-          d3.select(this).select("text.tooltip").style("visibility", "visible");
+          d3.select(this).select(".tooltip").style("visibility", "visible");
         })
         .on("mouseout", function (evt, d) {
-          d3.select(this).select("text.tooltip").style("visibility", "hidden");
+          d3.select(this).select(".tooltip").style("visibility", "hidden");
         });
 
       capitalGroups
@@ -73,17 +75,27 @@ export default {
         .attr("r", 4)
         .attr("fill", `${pointColor.value}`); // Add fill color for circle dots
 
-      // Let's create a tooltip SVG text element
+      // Let's create a tooltip div container
       const tooltip = capitalGroups
-        .append("text")
+        .append("foreignObject")
         .attr("class", "tooltip")
-        .attr("fill", "black")
-        .style("visibility", "hidden") // Initially hide the tooltip
-        .attr("fill", `${tooltipColor.value}`)
-        .style("background-color", "#fff") // Set background color inline
-        .style("border", "1px solid #ccc") // Set border inline
-        .style("padding", "5px") // Set padding inline
-        .style("font-weight", "bold"); // Set font weight inline
+        .attr("width", 150)
+        .attr("height", 150)
+        .attr("font-size", 15)
+        .attr("font-weight", "bold")
+        .style("visibility", "hidden");
+
+      tooltip
+        .append("xhtml:div")
+        .attr("class", "tooltip-content")
+        .style("background-color", `${tooltipColor.value}`)
+        .style("color", "#fff")
+        .style("border", "2px solid white")
+        .style("padding", "5px")
+        .style("border-radius", "5px")
+        .style("pointer-events", "none")
+        .html((d) => `Votes: \n Candidates:`);
+      // .html((d) => `${d.description[0]}`);
 
       // Adjust the text positioning
       capitalGroups
@@ -95,18 +107,39 @@ export default {
         // Change the contents and position of the tooltip
         .on("mouseover", function (evt, d) {
           d3.select(this).transition().duration("100").attr("font-size", 18);
-          const tooltipText = `${d.description[0]}`;
-          tooltip
-            .selectAll("tspan")
-            .data(tooltipText.split("\n"))
-            .join("tspan")
-            .attr("dy", "1em")
-            .attr("x", "0px")
-            .text((text) => text);
+          d3.select(this).select(".tooltip").style("visibility", "visible");
+          // Reduce opacity of other labels
+          capitalGroups
+            .selectAll("text")
+            .filter((_, i) => i !== d.index) // Exclude the hovered label
+            .transition()
+            .duration("100")
+            .style("opacity", 0.5);
+
+          // Reduce opacity of other points
+          capitalGroups
+            .selectAll("circle")
+            .filter((_, i) => i !== d.index) // Exclude the hovered point
+            .transition()
+            .duration("100")
+            .style("opacity", 0.5);
         })
         .on("mouseout", function (evt, d) {
           d3.select(this).transition().duration("200").attr("font-size", 11);
-          tooltip.selectAll("tspan").remove();
+          d3.select(this).select(".tooltip").style("visibility", "hidden");
+          // Restore opacity of other labels
+          capitalGroups
+            .selectAll("text")
+            .transition()
+            .duration("200")
+            .style("opacity", 1);
+
+          // Restore opacity of other points
+          capitalGroups
+            .selectAll("circle")
+            .transition()
+            .duration("200")
+            .style("opacity", 1);
         })
         .style("cursor", "pointer") // Set cursor style to pointer
         .text(({ description }) => description);
