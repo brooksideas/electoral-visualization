@@ -32,12 +32,12 @@ export default {
       labels: [1980, 1985, 1990, 1995, 2000, 2005, 2010, 2015, 2020],
       datasets: [
         {
-          label: "LIBERAL",
+          label: "NY and CT",
           data: [50, 78, 23, 34, 89, 32, 67, 44, 56],
           backgroundColor: "#3b82f6",
         },
         {
-          label: "CONSERVATIVE",
+          label: "ALL Other States",
           data: [
             100 - 50,
             100 - 78,
