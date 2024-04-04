@@ -6,6 +6,7 @@
 import * as d3 from "d3";
 import * as topojson from "topojson-client";
 import data from "../data/data.json";
+import ny from "../data/ny.json";
 import us from "../data/us.json";
 import { ref, onMounted } from "vue";
 
@@ -20,9 +21,37 @@ export default {
     // text color
     const textColor = ref("red");
 
+    /* This is for the frontend to handle the edge cities 
+    not to overlap witht the selection dropdown and pills  */
+    const edgeCities = [
+      "Annapolis",
+      "Augusta",
+      "Boston",
+      "Concord",
+      "Dover",
+      "Hartford",
+      "Montpelier",
+      "Providence",
+      "Trenton",
+    ];
+
     onMounted(() => {
-      const width = 975;
+      const width = 1000;
       const height = 610;
+
+      // Load the data
+      const nyData = ny;
+
+      // Merge the data based on state name
+      const mergedData = data.map((state) => {
+        const nyEntry = nyData.find((entry) => entry.state === state.state);
+        if (nyEntry) {
+          const t = { ...state, ...nyEntry };
+          return { ...state, ...nyEntry };
+        } else {
+          return state;
+        }
+      });
 
       const svg = d3
         .select("#d3-container")
@@ -54,7 +83,10 @@ export default {
         .attr("stroke-linecap", "round")
         .attr("d", path);
 
-      const stateCapitalElements = svg.selectAll("g").data(data).join("g");
+      const stateCapitalElements = svg
+        .selectAll("g")
+        .data(mergedData)
+        .join("g");
 
       const capitalGroups = stateCapitalElements
         .append("g")
@@ -79,9 +111,9 @@ export default {
       const tooltip = capitalGroups
         .append("foreignObject")
         .attr("class", "tooltip")
-        .attr("width", 150)
+        .attr("width", (d) => (edgeCities.includes(d.city) ? 80 : 150)) // 80 for edge states
         .attr("height", 150)
-        .attr("font-size", 15)
+        .attr("font-size", (d) => (edgeCities.includes(d.city) ? 10 : 15)) // 10 for edge states
         .attr("font-weight", "bold")
         .style("visibility", "hidden");
 
@@ -94,8 +126,7 @@ export default {
         .style("padding", "5px")
         .style("border-radius", "5px")
         .style("pointer-events", "none")
-        .html((d) => `Votes: \n Candidates:`);
-      // .html((d) => `${d.description[0]}`);
+        .html((d) => `Votes: ${d.candidatevotes} \n Total: ${d.totalvotes}`);
 
       // Adjust the text positioning
       capitalGroups
@@ -142,7 +173,7 @@ export default {
             .style("opacity", 1);
         })
         .style("cursor", "pointer") // Set cursor style to pointer
-        .text(({ description }) => description);
+        .text(({ city }) => city);
     });
   },
 };

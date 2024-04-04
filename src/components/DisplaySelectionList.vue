@@ -2,9 +2,9 @@
   <!-- Page 1 ,This is for the House Data Party selection   -->
   <div
     v-if="displayView == views.HOUSE"
-    class="grid grid-cols-12 gap-4 ml-12 mt-[-64px]"
+    class="grid grid-cols-12 gap-4 ml-12"
   >
-    <div class="col-span-12 gap-4 ml-12 mt-[-64px]">
+    <div class="col-span-12 gap-4 ml-12">
       <dropdown-options-list />
     </div>
     <div class="col-span-8">
