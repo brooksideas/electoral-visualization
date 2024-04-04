@@ -173,7 +173,14 @@ export default {
         .style("padding", "5px")
         .style("border-radius", "5px")
         .style("pointer-events", "none")
-        .html((d) => `Votes: ${d3.format(",")(d.candidatevotes)} \n Total: ${d3.format(",")(d.totalvotes)}`);
+        .html(
+          (d) =>
+            `Votes: ${d3.format(",")(d.candidatevotes)} \n Total: ${d3.format(
+              ","
+            )(d.totalvotes)} \n Percentage: ${d3.format(".0%")(
+              d.percentage_won
+            )}`
+        );
 
       // Adjust the text positioning
       capitalGroups

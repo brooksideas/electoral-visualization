@@ -175,9 +175,10 @@ export default {
         .style("pointer-events", "none")
         .html(
           (d) =>
-            `Votes: ${d3.format(",")(d.candidatevotes)} \n Total: ${d3.format(
+            `Votes: ${d3.format(",")(d.candidatevotes)} 
+            \n Total: ${d3.format(
               ","
-            )(d.totalvotes)}`
+            )(d.totalvotes)} \n Percentage: ${d3.format(".0%")(d.percentage_won)} `
         );
 
       // Adjust the text positioning
