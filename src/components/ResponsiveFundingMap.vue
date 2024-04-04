@@ -6,8 +6,7 @@
 import * as d3 from "d3";
 import * as topojson from "topojson-client";
 import data from "../data/data.json";
-import ny from "../data/ny.json"; // assumed to be fetched when integrated
-import az from "../data/az.json"; // assumed to be fetched when integrated
+import transaction from "../data/transaction.json";
 import us from "../data/us.json";
 import { ref, onMounted, watch } from "vue";
 
@@ -57,13 +56,13 @@ export default {
     // Hoisting so Mounted lifecycle first
     onMounted(() => {
       // Load the data
-      const nyData = ny;
+      const transactionData = transaction;
 
       // Merge the data based on state name
       mergedData.value = data.map((state) => {
-        const nyEntry = nyData.find((entry) => entry.state_po === state.code);
-        if (nyEntry) {
-          return { ...state, ...nyEntry };
+        const transactionEntry = transactionData.find((entry) => entry.State === state.code);
+        if (transactionEntry) {
+          return { ...state, ...transactionEntry };
         } else {
           return state;
         }
@@ -73,26 +72,27 @@ export default {
       drawVisualization();
     });
 
+    // Currently not required. But when the search is clicked we will trigger accordingly 
     //TODO:: This is a test,  Watch for changes in mergedData and redraw the visualization
-    watch(watchTrigger, () => {
-      // Load the AZ data
-      const azData = az;
+    // watch(watchTrigger, () => {
+    //   // Load the AZ data
+    //   const azData = az;
 
-      // Merge the data based on state name
-      mergedData.value = data.map((state) => {
-        const azEntry = azData.find((entry) => entry.state_po === state.code);
-        if (azEntry) {
-          return { ...state, ...azEntry };
-        } else {
-          return state;
-        }
-      });
+    //   // Merge the data based on state name
+    //   mergedData.value = data.map((state) => {
+    //     const azEntry = azData.find((entry) => entry.state_po === state.code);
+    //     if (azEntry) {
+    //       return { ...state, ...azEntry };
+    //     } else {
+    //       return state;
+    //     }
+    //   });
 
-      console.log("watch triggered", mergedData.value);
+    //   console.log("watch triggered", mergedData.value);
 
-      // Assuming we only need to update for changed data
-      updateVisualization(mergedData.value);
-    });
+    //   // Assuming we only need to update for changed data
+    //   updateVisualization(mergedData.value);
+    // });
 
     const drawVisualization = () => {
       const svg = d3
@@ -175,11 +175,9 @@ export default {
         .style("pointer-events", "none")
         .html(
           (d) =>
-            `Votes: ${d3.format(",")(d.candidatevotes)} \n Total: ${d3.format(
+            `Contributors: ${d3.format(",")(d.Transaction_Type)} \n Transaction Amount: ${d3.format(
               ","
-            )(d.totalvotes)} \n Percentage: ${d3.format(".0%")(
-              d.percentage_won
-            )}`
+            )(d.Transaction_Amount)}`
         );
 
       // Adjust the text positioning
