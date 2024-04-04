@@ -61,7 +61,7 @@ export default {
 
       // Merge the data based on state name
       mergedData.value = data.map((state) => {
-        const nyEntry = nyData.find((entry) => entry.state === state.state);
+        const nyEntry = nyData.find((entry) => entry.state_po === state.code);
         if (nyEntry) {
           return { ...state, ...nyEntry };
         } else {
@@ -80,7 +80,7 @@ export default {
 
       // Merge the data based on state name
       mergedData.value = data.map((state) => {
-        const azEntry = azData.find((entry) => entry.state === state.state);
+        const azEntry = azData.find((entry) => entry.state_po === state.code);
         if (azEntry) {
           return { ...state, ...azEntry };
         } else {

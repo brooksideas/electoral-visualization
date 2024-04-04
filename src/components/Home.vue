@@ -2,16 +2,16 @@
 import { inject, ref, onMounted, onBeforeUnmount, computed } from "vue";
 import { views } from "../constants/views";
 import DisplayOptionsList from "./DisplayOptionsList.vue";
-import ResponsiveStateMap from "./ResponsiveStateMap.vue";
-import ResponsiveCityMap from "./ResponsiveCityMap.vue";
+import ResponsiveHouseMap from "./ResponsiveHouseMap.vue";
+import ResponsiveFundingMap from "./ResponsiveFundingMap.vue";
 import ResponsiveChart from "./ResponsiveChart.vue";
 import DisplaySelectionList from "./DisplaySelectionList.vue";
 export default {
   name: "Home",
   components: {
     DisplayOptionsList,
-    ResponsiveStateMap,
-    ResponsiveCityMap,
+    ResponsiveHouseMap,
+    ResponsiveFundingMap,
     ResponsiveChart,
     DisplaySelectionList,
   },
@@ -83,8 +83,8 @@ export default {
       >
         <h1>{{ title }}</h1>
         <h2>{{ handleDescriptionRender }}</h2>
-        <responsive-state-map v-if="displayView == views.HOUSE" />
-        <responsive-city-map v-if="displayView == views.FUNDING" />
+        <responsive-house-map v-if="displayView == views.HOUSE" />
+        <responsive-funding-map v-if="displayView == views.FUNDING" />
         <responsive-chart v-if="displayView == views.CHARTS" />
       </div>
       <div
