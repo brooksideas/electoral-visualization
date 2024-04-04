@@ -6,12 +6,17 @@
 import * as d3 from "d3";
 import * as topojson from "topojson-client";
 import data from "../data/data.json";
-import ny from "../data/ny.json";
+import ny from "../data/ny.json"; // assumed to be fetched when integrated
+import az from "../data/az.json"; // assumed to be fetched when integrated
 import us from "../data/us.json";
-import { ref, onMounted } from "vue";
+import { ref, onMounted, watch } from "vue";
 
 export default {
   setup() {
+    // Map width and height
+    const width = ref(1000);
+    const height = ref(610);
+
     // point color
     const pointColor = ref("blue");
 
@@ -21,10 +26,14 @@ export default {
     // text color
     const textColor = ref("red");
 
+    // change
+    const watchTrigger = ref(0);
+
     /* This is for the frontend to handle the edge cities 
     not to overlap witht the selection dropdown and pills  */
     const edgeCities = [
       "Annapolis",
+      "Albany",
       "Augusta",
       "Boston",
       "Concord",
@@ -35,37 +44,64 @@ export default {
       "Trenton",
     ];
 
-    onMounted(() => {
-      const width = 1000;
-      const height = 610;
+    // Reactive Data
+    const mergedData = ref([]);
 
+    // Use setTimeout to introduce a delay
+    // To be replaced by the Axios data response
+    // or Dropdown / party button trigger
+    setTimeout(() => {
+      watchTrigger.value++;
+    }, 5000);
+
+    // Hoisting so Mounted lifecycle first
+    onMounted(() => {
       // Load the data
       const nyData = ny;
 
       // Merge the data based on state name
-      const mergedData = data.map((state) => {
+      mergedData.value = data.map((state) => {
         const nyEntry = nyData.find((entry) => entry.state === state.state);
         if (nyEntry) {
-          const t = { ...state, ...nyEntry };
           return { ...state, ...nyEntry };
         } else {
           return state;
         }
       });
+      console.log("mount triggered", mergedData.value);
+      // draw the map
+      drawVisualization();
+    });
 
+    //TODO:: This is a test,  Watch for changes in mergedData and redraw the visualization
+    watch(watchTrigger, () => {
+      // Load the AZ data
+      const azData = az;
+
+      // Merge the data based on state name
+      mergedData.value = data.map((state) => {
+        const azEntry = azData.find((entry) => entry.state === state.state);
+        if (azEntry) {
+          return { ...state, ...azEntry };
+        } else {
+          return state;
+        }
+      });
+
+      console.log("watch triggered", mergedData.value);
+
+      // Assuming we only need to update for changed data
+      updateVisualization(mergedData.value);
+    });
+
+    const drawVisualization = () => {
       const svg = d3
         .select("#d3-container")
         .append("svg")
-        .attr("width", width)
-        .attr("height", height);
+        .attr("width", width.value)
+        .attr("height", height.value);
 
       const path = d3.geoPath();
-
-      // Define the projection
-      const projection = d3
-        .geoAlbersUsa()
-        .translate([width / 2, height / 2]) // Translate to the center of SVG
-        .scale([1300]); // Scale the projection to 1300 for my screen
 
       // Assuming 'us' and 'data' are defined elsewhere
       svg
@@ -83,9 +119,20 @@ export default {
         .attr("stroke-linecap", "round")
         .attr("d", path);
 
+      updateVisualization(mergedData.value);
+    };
+
+    const updateVisualization = (data) => {
+      const svg = d3.select("#d3-container").select("svg"); // select the map to re-draw
+
+      const projection = d3
+        .geoAlbersUsa()
+        .translate([width.value / 2, height.value / 2]) // Translate to the center of SVG
+        .scale([1300]); // Scale the projection to 1300 for my screen
+
       const stateCapitalElements = svg
         .selectAll("g")
-        .data(mergedData)
+        .data(data, (d) => d.state) // Update based on state name
         .join("g");
 
       const capitalGroups = stateCapitalElements
@@ -113,7 +160,7 @@ export default {
         .attr("class", "tooltip")
         .attr("width", (d) => (edgeCities.includes(d.city) ? 80 : 150)) // 80 for edge states
         .attr("height", 150)
-        .attr("font-size", (d) => (edgeCities.includes(d.city) ? 10 : 15)) // 10 for edge states
+        .attr("font-size", (d) => (edgeCities.includes(d.city) ? 12 : 15)) // 10 for edge states
         .attr("font-weight", "bold")
         .style("visibility", "hidden");
 
@@ -174,7 +221,11 @@ export default {
         })
         .style("cursor", "pointer") // Set cursor style to pointer
         .text(({ city }) => city);
-    });
+    };
+
+    return {
+      mergedData,
+    };
   },
 };
 </script>
