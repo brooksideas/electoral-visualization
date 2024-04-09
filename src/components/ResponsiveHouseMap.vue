@@ -6,12 +6,10 @@
 import * as d3 from "d3";
 import * as topojson from "topojson-client";
 import data from "../data/data.json";
-import ny from "../data/ny.json"; // assumed to be fetched when integrated
-import az from "../data/az.json"; // assumed to be fetched when integrated
 import us from "../data/us.json";
 import axios from "axios";
 import { urls } from "../constants/urls";
-import { ref, onMounted, watch } from "vue";
+import { ref, onMounted } from "vue";
 
 export default {
   setup() {
@@ -26,10 +24,7 @@ export default {
     const tooltipColor = ref("#14b8a6");
 
     // text color
-    const textColor = ref("red");
-
-    // change
-    const watchTrigger = ref(0);
+    const textColor = ref("red"); 
 
     /* This is for the frontend to handle the edge cities 
     not to overlap witht the selection dropdown and pills  */
@@ -49,72 +44,15 @@ export default {
     // Reactive Data
     const mergedData = ref([]);
 
-    // Use setTimeout to introduce a delay
-    // To be replaced by the Axios data response
-    // or Dropdown / party button trigger
-    setTimeout(() => {
-      watchTrigger.value++;
-    }, 5000);
-
     // Define the BASE API URL for our AWS API Gateway
     const url = urls.BASE_API;
 
     // Hoisting so Mounted lifecycle first
     onMounted(() => {
-      // Define the query parameters
-      const params = {
-        party: "CONSERVATIVE",
-        year: 1976,
-      };
-
-      // Make the GET request using Axios
-      axios
-        .get(url, { params })
-        .then((response) => {
-          // Handle the response data
-          console.log(response.data);
-        })
-        .catch((error) => {
-          // Handle any errors
-          console.error("Error:", error);
-        });
-
-      // Load the data
-      const nyData = ny;
-
-      // Merge the data based on state name
-      mergedData.value = data.map((state) => {
-        const nyEntry = nyData.find((entry) => entry.state_po === state.code);
-        if (nyEntry) {
-          return { ...state, ...nyEntry };
-        } else {
-          return state;
-        }
-      });
-      console.log("mount triggered", mergedData.value);
-      // draw the map
+      // draw the empty map
       drawVisualization();
-    });
-
-    //TODO:: This is a test,  Watch for changes in mergedData and redraw the visualization
-    watch(watchTrigger, () => {
-      // Load the AZ data
-      const azData = az;
-
-      // Merge the data based on state name
-      mergedData.value = data.map((state) => {
-        const azEntry = azData.find((entry) => entry.state_po === state.code);
-        if (azEntry) {
-          return { ...state, ...azEntry };
-        } else {
-          return state;
-        }
-      });
-
-      console.log("watch triggered", mergedData.value);
-
-      // Assuming we only need to update for changed data
-      updateVisualization(mergedData.value);
+      // Define the query parameters
+      fetchData("CONSERVATIVE", 1976); // set for the mount lifecycle only
     });
 
     const drawVisualization = () => {
@@ -196,13 +134,13 @@ export default {
         .style("padding", "5px")
         .style("border-radius", "5px")
         .style("pointer-events", "none")
-        .html(
-          (d) =>
-            `Votes: ${d3.format(",")(d.candidatevotes)} 
-            \n Total: ${d3.format(",")(
-              d.totalvotes
-            )} \n Percentage: ${d3.format(".0%")(d.percentage_won)} `
-        );
+        .html((d) => {
+          const percentage = d.percentage_won === 0 ? 0.1 : d.percentage_won;
+          const formattedPercentage = d3.format(".1%")(percentage);
+          return `Votes: ${d3.format(",")(d.candidatevotes)} 
+                \n Total: ${d3.format(",")(d.totalvotes)} 
+                \n Percentage: ${formattedPercentage}`;
+        });
 
       // Adjust the text positioning
       capitalGroups
@@ -250,6 +188,41 @@ export default {
         })
         .style("cursor", "pointer") // Set cursor style to pointer
         .text(({ city }) => city);
+    };
+
+    const fetchData = (party, year) => {
+      // Define the URL and query parameters
+      const params = {
+        party: party,
+        year: year,
+      };
+
+      // Make the GET request using Axios
+      axios
+        .get(url, { params })
+        .then((response) => {
+          // Handle the response data
+          console.log(response.data);
+          const responseData = response.data;
+          mergedData.value = data
+            .filter((state) =>
+              responseData.some((entry) => entry.state_po === state.code)
+            )
+            .map((state) => {
+              const responseEntry = responseData.find(
+                (entry) => entry.state_po === state.code
+              );
+              return { ...state, ...responseEntry };
+            });
+
+          console.log("mount axios data ->", mergedData.value);
+
+          // Assuming we only need to draw for fetched data on the Map
+          updateVisualization(mergedData.value);
+        })
+        .catch((error) => {
+          console.error("Error fetching data:", error);
+        });
     };
 
     return {
