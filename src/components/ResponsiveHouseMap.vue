@@ -9,6 +9,8 @@ import data from "../data/data.json";
 import ny from "../data/ny.json"; // assumed to be fetched when integrated
 import az from "../data/az.json"; // assumed to be fetched when integrated
 import us from "../data/us.json";
+import axios from "axios";
+import { urls } from "../constants/urls";
 import { ref, onMounted, watch } from "vue";
 
 export default {
@@ -54,8 +56,29 @@ export default {
       watchTrigger.value++;
     }, 5000);
 
+    // Define the BASE API URL for our AWS API Gateway
+    const url = urls.BASE_API;
+
     // Hoisting so Mounted lifecycle first
     onMounted(() => {
+      // Define the query parameters
+      const params = {
+        party: "CONSERVATIVE",
+        year: 1976,
+      };
+
+      // Make the GET request using Axios
+      axios
+        .get(url, { params })
+        .then((response) => {
+          // Handle the response data
+          console.log(response.data);
+        })
+        .catch((error) => {
+          // Handle any errors
+          console.error("Error:", error);
+        });
+
       // Load the data
       const nyData = ny;
 
@@ -176,9 +199,9 @@ export default {
         .html(
           (d) =>
             `Votes: ${d3.format(",")(d.candidatevotes)} 
-            \n Total: ${d3.format(
-              ","
-            )(d.totalvotes)} \n Percentage: ${d3.format(".0%")(d.percentage_won)} `
+            \n Total: ${d3.format(",")(
+              d.totalvotes
+            )} \n Percentage: ${d3.format(".0%")(d.percentage_won)} `
         );
 
       // Adjust the text positioning
