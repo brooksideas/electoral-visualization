@@ -9,10 +9,12 @@ import data from "../data/data.json";
 import us from "../data/us.json";
 import axios from "axios";
 import { urls } from "../constants/urls";
-import { ref, onMounted } from "vue";
+import { inject, ref, onMounted, watch } from "vue";
 
 export default {
   setup() {
+    const bus = inject("$bus");
+
     // Map width and height
     const width = ref(1000);
     const height = ref(610);
@@ -24,7 +26,7 @@ export default {
     const tooltipColor = ref("#14b8a6");
 
     // text color
-    const textColor = ref("red"); 
+    const textColor = ref("red");
 
     /* This is for the frontend to handle the edge cities 
     not to overlap witht the selection dropdown and pills  */
@@ -44,6 +46,22 @@ export default {
     // Reactive Data
     const mergedData = ref([]);
 
+    // Party selection for House Map
+    const party = ref("LIBERAL");
+
+    // Year selection for Map
+    const year = ref(1976);
+
+    // Listen for party selection Event from Display Selection component
+    bus.on("partySelectionEvt", (partySelected) => {
+      party.value = partySelected;
+    });
+
+    // Listen for year selection Event from Year Dropdown component
+    bus.on("yearSelectionEvt", (yearSelected) => {
+      year.value = yearSelected;
+    });
+
     // Define the BASE API URL for our AWS API Gateway
     const url = urls.BASE_API;
 
@@ -52,7 +70,15 @@ export default {
       // draw the empty map
       drawVisualization();
       // Define the query parameters
-      fetchData("CONSERVATIVE", 1976); // set for the mount lifecycle only
+      fetchData(party.value, year.value); // set for the mount lifecycle only
+    });
+
+    // Fetch New data when party or year is selected
+    watch(party, () => {
+      fetchData(party.value, year.value);
+    });
+    watch(year, () => {
+      fetchData(party.value, year.value);
     });
 
     const drawVisualization = () => {
@@ -146,7 +172,7 @@ export default {
       capitalGroups
         .append("text")
         .attr("font-family", "sans-serif")
-        .attr("font-size", 11)
+        .attr("font-size", 15)
         .attr("text-anchor", "middle")
         .attr("fill", `${textColor.value}`)
         // Change the contents and position of the tooltip

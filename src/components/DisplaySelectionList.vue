@@ -140,7 +140,7 @@ export default {
     };
 
     const partySelected = (party) => {
-      console.log("party ->", party);
+      bus.emit("partySelectionEvt", party);
     };
 
     const nextPage = () => {

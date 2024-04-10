@@ -74,10 +74,12 @@
 </template>
   
   <script>
-import { ref, onMounted, watch } from "vue";
+import { inject, ref, onMounted, watch } from "vue";
 
 export default {
   setup() {
+    const bus = inject("$bus");
+
     const open = ref(false);
     const selectedYear = ref(null);
     const years = ref([]);
@@ -104,7 +106,7 @@ export default {
 
     const selectYear = (year) => {
       selectedYear.value = year;
-      // console.log("Selected year:", year);
+      bus.emit("yearSelectionEvt", year);
       open.value = false;
     };
 
