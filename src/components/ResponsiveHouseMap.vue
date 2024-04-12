@@ -9,11 +9,15 @@ import data from "../data/data.json";
 import us from "../data/us.json";
 import axios from "axios";
 import { urls } from "../constants/urls";
+import { views } from "../constants/views";
 import { inject, ref, onMounted, watch } from "vue";
 
 export default {
   setup() {
     const bus = inject("$bus");
+
+    // Define the BASE API URL for our AWS API Gateway
+    const url = urls.BASE_API;
 
     // Map width and height
     const width = ref(1000);
@@ -43,6 +47,8 @@ export default {
       "Trenton",
     ];
 
+    const islandCities = ["Juneau", "Honolulu"];
+
     // Reactive Data
     const mergedData = ref([]);
 
@@ -61,9 +67,6 @@ export default {
     bus.on("yearSelectionEvt", (yearSelected) => {
       year.value = yearSelected;
     });
-
-    // Define the BASE API URL for our AWS API Gateway
-    const url = urls.BASE_API;
 
     // Hoisting so Mounted lifecycle first
     onMounted(() => {
@@ -147,7 +150,8 @@ export default {
         .attr("class", "tooltip")
         .attr("width", (d) => (edgeCities.includes(d.city) ? 80 : 150)) // 80 for edge states
         .attr("height", 150)
-        .attr("font-size", (d) => (edgeCities.includes(d.city) ? 12 : 15)) // 10 for edge states
+        .attr("font-size", (d) => (edgeCities.includes(d.city) ? 12 : 15)) // 12 for edge states
+        .attr("font-size", (d) => (islandCities.includes(d.city) ? 10 : 15)) // 10 for island states
         .attr("font-weight", "bold")
         .style("visibility", "hidden");
 
@@ -219,6 +223,7 @@ export default {
     const fetchData = (party, year) => {
       // Define the URL and query parameters
       const params = {
+        view: views.HOUSE,
         party: party,
         year: year,
       };
