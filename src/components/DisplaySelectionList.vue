@@ -78,12 +78,12 @@
     class="grid grid-cols-1 gap-4 ml-12 mt-[-64px]"
   >
     <year-slider-options-list />
-    <div v-for="average in averages" :key="average" class="flex">
+    <div class="flex">
       <button
         type="button"
         class="inline-block w-[300px] px-3 py-2 gap-4 text-white font-semibold rounded-md shadow-md bg-slate-500 hover:bg-slate-600 focus:outline-none focus:ring-2 focus:ring-slate-400 focus:ring-opacity-50"
       >
-        {{ average }}
+        Search
       </button>
     </div>
   </div>
@@ -117,8 +117,6 @@ export default {
 
     const years = ref([2008, 2010, 2012, 2014, 2016, 2018, 2020, 2022]);
 
-    // Average Count display
-    const averages = ref(["Candidate count", "Total votes count"]);
     const itemsPerPage = 10;
     const currentPage = ref(0);
     const transactionYear = ref(2008);
@@ -171,7 +169,6 @@ export default {
       views,
       partyList,
       years,
-      averages,
       displayView,
       paginatedPartyList,
       getRandomColorCombination,
