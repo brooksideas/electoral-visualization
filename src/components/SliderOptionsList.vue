@@ -39,7 +39,6 @@
         :max="maxValue / 2"
         :step="stepValue"
         v-model="minSliderValue"
-        @input="updateMaxSliderMinValue"
       />
     </div>
     <div class="col-span-6 pl-4">
@@ -50,7 +49,6 @@
         :max="maxValue"
         :step="stepValue"
         v-model="maxSliderValue"
-        @input="updateMinSliderMaxValue"
       />
     </div>
 
@@ -80,6 +78,7 @@
     <div class="col-span-12 ml-12">
       <button
         class="px-4 py-2 bg-blue-500 hover:bg-blue-600 text-white font-semibold rounded-md shadow-md transition duration-300 ease-in-out"
+        @click="searchEvent"
       >
         Search
       </button>
@@ -88,29 +87,19 @@
 </template>
   
   <script>
-import { ref, computed } from "vue";
+import { inject, ref, computed, watch } from "vue";
 
 export default {
   setup() {
+    const bus = inject("$bus");
     const minValue = 25;
     const maxValue = 2800000;
     const stepValue = 1;
     const displayTooltip = ref(false);
 
-    const minSliderValue = ref(minValue);
-    const maxSliderValue = ref(maxValue);
+    const minSliderValue = ref(100);
+    const maxSliderValue = ref(1000);
 
-    const updateMaxSliderMinValue = (event) => {
-      if (minSliderValue.value > maxSliderValue.value) {
-        maxSliderValue.value = minSliderValue.value;
-      }
-    };
-
-    const updateMinSliderMaxValue = (event) => {
-      if (maxSliderValue.value < minSliderValue.value) {
-        minSliderValue.value = maxSliderValue.value;
-      }
-    };
     const showTooltip = () => {
       displayTooltip.value = true;
     };
@@ -128,8 +117,8 @@ export default {
       },
       set(newValue) {
         // Remove commas before setting the value
-        const newValueWithoutCommas = newValue.replace(/,/g, "");
-        minSliderValue.value = parseInt(newValueWithoutCommas);
+        const newMinValueWithoutCommas = newValue.replace(/,/g, "");
+        minSliderValue.value = parseInt(newMinValueWithoutCommas);
       },
     });
 
@@ -154,8 +143,8 @@ export default {
       },
       set(newValue) {
         // Remove commas before setting the value
-        const newValueWithoutCommas = newValue.replace(/,/g, "");
-        maxSliderValue.value = parseInt(newValueWithoutCommas);
+        const newMaxValueWithoutCommas = newValue.replace(/,/g, "");
+        maxSliderValue.value = parseInt(newMaxValueWithoutCommas);
       },
     });
 
@@ -171,6 +160,26 @@ export default {
       }
     };
 
+    watch(minSliderValue, () => {
+      if (parseInt(minSliderValue.value) > parseInt(maxSliderValue.value)) {
+        maxSliderValue.value = (maxValue / 2 + 1).toString();
+      }
+    });
+
+    // Search Event propagated to the Responsive Funding component
+    const searchEvent = () => {
+      console.log(
+        "searchFundingDataEvt",
+        parseInt(minSliderValue.value),
+        parseInt(maxSliderValue.value)
+      );
+      const sliderValues = {
+        min: minSliderValue.value,
+        max: maxSliderValue.value,
+      };
+      bus.emit("searchFundingDataEvt", sliderValues);
+    };
+
     return {
       minValue,
       maxValue,
@@ -180,10 +189,9 @@ export default {
       showTooltip,
       hideTooltip,
       displayTooltip,
+      searchEvent,
       handleMinInput,
       handleMaxInput,
-      updateMaxSliderMinValue,
-      updateMinSliderMaxValue,
       formattedMinSliderValue,
       formattedMaxSliderValue,
     };

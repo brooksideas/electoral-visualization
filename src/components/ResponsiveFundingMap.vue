@@ -6,12 +6,19 @@
 import * as d3 from "d3";
 import * as topojson from "topojson-client";
 import data from "../data/data.json";
-import transaction from "../data/transaction.json";
 import us from "../data/us.json";
-import { ref, onMounted, watch } from "vue";
+import axios from "axios";
+import { inject, ref, onMounted } from "vue";
+import { urls } from "../constants/urls";
+import { views } from "../constants/views";
 
 export default {
   setup() {
+    const bus = inject("$bus");
+
+    // Define the BASE API URL for our AWS API Gateway
+    const url = urls.BASE_API;
+
     // Map width and height
     const width = ref(1000);
     const height = ref(610);
@@ -24,9 +31,6 @@ export default {
 
     // text color
     const textColor = ref("red");
-
-    // change
-    const watchTrigger = ref(0);
 
     /* This is for the frontend to handle the edge cities 
     not to overlap witht the selection dropdown and pills  */
@@ -43,56 +47,44 @@ export default {
       "Trenton",
     ];
 
+    const islandCities = ["Juneau", "Honolulu"];
+
     // Reactive Data
     const mergedData = ref([]);
 
-    // Use setTimeout to introduce a delay
-    // To be replaced by the Axios data response
-    // or Dropdown / party button trigger
-    setTimeout(() => {
-      watchTrigger.value++;
-    }, 5000);
+    // Initial default values
+    const fundingYear = ref("2008");
+    const min = ref("100");
+    const max = ref("1000");
+
+    // Listen to the transaction year selection Event from Display Selection component
+    bus.on("transactionYearSelectionEvt", (transactionYearSelected) => {
+      fundingYear.value = transactionYearSelected;
+    });
+
+    // Listen to the Slider Min and Max selection Event from Slider Options component
+    bus.on("searchFundingDataEvt", (sliderValue) => {
+      console.log(
+        "min and max",
+        fundingYear.value.toString(),
+        sliderValue.min,
+        sliderValue.max
+      );
+      fetchTransactionData(
+        fundingYear.value.toString(),
+        sliderValue.min,
+        sliderValue.max
+      );
+    });
 
     // Hoisting so Mounted lifecycle first
     onMounted(() => {
-      // Load the data
-      const transactionData = transaction;
-
-      // Merge the data based on state name
-      mergedData.value = data.map((state) => {
-        const transactionEntry = transactionData.find((entry) => entry.State === state.code);
-        if (transactionEntry) {
-          return { ...state, ...transactionEntry };
-        } else {
-          return state;
-        }
-      });
-      console.log("mount triggered", mergedData.value);
       // draw the map
       drawVisualization();
+
+      // Define the query parameters
+      fetchTransactionData(fundingYear.value, min.value, max.value);
     });
-
-    // Currently not required. But when the search is clicked we will trigger accordingly 
-    //TODO:: This is a test,  Watch for changes in mergedData and redraw the visualization
-    // watch(watchTrigger, () => {
-    //   // Load the AZ data
-    //   const azData = az;
-
-    //   // Merge the data based on state name
-    //   mergedData.value = data.map((state) => {
-    //     const azEntry = azData.find((entry) => entry.state_po === state.code);
-    //     if (azEntry) {
-    //       return { ...state, ...azEntry };
-    //     } else {
-    //       return state;
-    //     }
-    //   });
-
-    //   console.log("watch triggered", mergedData.value);
-
-    //   // Assuming we only need to update for changed data
-    //   updateVisualization(mergedData.value);
-    // });
 
     const drawVisualization = () => {
       const svg = d3
@@ -160,7 +152,8 @@ export default {
         .attr("class", "tooltip")
         .attr("width", (d) => (edgeCities.includes(d.city) ? 80 : 150)) // 80 for edge states
         .attr("height", 150)
-        .attr("font-size", (d) => (edgeCities.includes(d.city) ? 12 : 15)) // 10 for edge states
+        .attr("font-size", (d) => (edgeCities.includes(d.city) ? 12 : 15)) // 12 for edge states
+        .attr("font-size", (d) => (islandCities.includes(d.city) ? 10 : 15)) // 7 for island states
         .attr("font-weight", "bold")
         .style("visibility", "hidden");
 
@@ -175,9 +168,9 @@ export default {
         .style("pointer-events", "none")
         .html(
           (d) =>
-            `Contributors: ${d3.format(",")(d.Transaction_Type)} \n Transaction Amount: ${d3.format(
-              ","
-            )(d.Transaction_Amount)}`
+            `Contributors: ${d3.format(",")(
+              d.Transaction_Type
+            )} \n Transaction Amount: ${d3.format(",")(d.Transaction_Amount)}`
         );
 
       // Adjust the text positioning
@@ -226,6 +219,43 @@ export default {
         })
         .style("cursor", "pointer") // Set cursor style to pointer
         .text(({ city }) => city);
+    };
+
+    const fetchTransactionData = (fundingYear, min, max) => {
+      // Define the URL and query parameters
+      const params = {
+        view: views.FUNDING,
+        funding_year: fundingYear,
+        min: min,
+        max: max,
+      };
+
+      // Make the GET request using Axios
+      axios
+        .get(url, { params })
+        .then((response) => {
+          // Handle the response data
+          console.log("Funding response->", response.data);
+          const responseData = response.data;
+          mergedData.value = data
+            .filter((state) =>
+              responseData.some((entry) => entry.State === state.code)
+            )
+            .map((state) => {
+              const responseEntry = responseData.find(
+                (entry) => entry.State === state.code
+              );
+              return { ...state, ...responseEntry };
+            });
+
+          console.log("mount axios Funding data ->", mergedData.value);
+
+          // Assuming we only need to draw for fetched data on the Map
+          updateVisualization(mergedData.value);
+        })
+        .catch((error) => {
+          console.error("Error fetching data:", error);
+        });
     };
 
     return {

@@ -53,7 +53,13 @@
         <div class="col-span-4" v-for="year in years" :key="year">
           <button
             type="button"
-            class="inline-block px-3 py-2 mx-4 my-4 gap-4 text-white font-semibold rounded-md shadow-md bg-slate-500 hover:bg-slate-600 focus:outline-none focus:ring-2 focus:ring-slate-400 focus:ring-opacity-50"
+            :disabled="transactionYear === year"
+            class="inline-block px-3 py-2 mx-4 my-4 gap-4 text-white font-semibold rounded-md shadow-md focus:outline-none focus:ring-2 focus:ring-slate-400 focus:ring-opacity-50"
+            :class="{
+              'bg-slate-500 hover:bg-slate-600': transactionYear !== year,
+              'bg-zinc-300 hover:bg-zinc-400': transactionYear === year,
+            }"
+            @click="transactionYearSelected(year)"
           >
             {{ year }}
           </button>
@@ -115,6 +121,7 @@ export default {
     const averages = ref(["Candidate count", "Total votes count"]);
     const itemsPerPage = 10;
     const currentPage = ref(0);
+    const transactionYear = ref(2008);
 
     const totalPages = computed(() =>
       Math.ceil(partyList.length / itemsPerPage)
@@ -155,6 +162,11 @@ export default {
       }
     };
 
+    const transactionYearSelected = (year) => {
+      transactionYear.value = year;
+      bus.emit("transactionYearSelectionEvt", year);
+    };
+
     return {
       views,
       partyList,
@@ -168,6 +180,8 @@ export default {
       previousPage,
       totalPages,
       currentPage,
+      transactionYear,
+      transactionYearSelected,
     };
   },
 };
