@@ -104,25 +104,6 @@ import { views } from "../constants/views";
 export default {
   name: "Display Options List",
   setup() {
-    /*
-    // Define display options
-    const displayOptions = ref([
-      { id: 1, name: "House", component: "responsive-state-map" },
-      { id: 2, name: "City", component: "responsive-city-map" },
-      // Add more display options as needed
-    ]);
-
-    // Track the selected display option
-    const selectedOption = ref(null);
-
-    // Method to select an option
-    const selectOption = (option) => {
-      selectedOption.value = option;
-      // Emit an event to inform the parent component about the selected option
-      emit("option-selected", option.component);
-    };
-*/
-
     // Inject the Event Bus
     const bus = inject("$bus");
 
