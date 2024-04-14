@@ -168,11 +168,6 @@ export default {
 
     // Search Event propagated to the Responsive Funding component
     const searchEvent = () => {
-      console.log(
-        "searchFundingDataEvt",
-        parseInt(minSliderValue.value),
-        parseInt(maxSliderValue.value)
-      );
       const sliderValues = {
         min: minSliderValue.value,
         max: maxSliderValue.value,
