@@ -33,13 +33,12 @@ export default {
       datasets: [
         {
           label: "NY and CT",
-          data: [50, 78, 23, 34, 89, 32, 67, 44, 56],
+          data: [78, 23, 34, 89, 32, 67, 44, 56],
           backgroundColor: "#3b82f6",
         },
         {
           label: "ALL Other States",
           data: [
-            100 - 50,
             100 - 78,
             100 - 23,
             100 - 34,
