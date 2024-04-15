@@ -53,7 +53,7 @@
         <div class="col-span-4" v-for="year in years" :key="year">
           <button
             type="button"
-            :disabled="transactionYear === year"
+            :disabled="transactionYear === year || searching"
             class="inline-block px-3 py-2 mx-4 my-4 gap-4 text-white font-semibold rounded-md shadow-md focus:outline-none focus:ring-2 focus:ring-slate-400 focus:ring-opacity-50"
             :class="{
               'bg-slate-500 hover:bg-slate-600': transactionYear !== year,
@@ -104,8 +104,15 @@ export default {
     bus.on("renderEvt", (renderEvt) => {
       displayView.value = renderEvt;
     });
+    // Listen to the Loading state start and stop from Map and chart Component
+    // to disable the buttons accordingly
+    bus.on("triggerLoadingStateEvt", (loadingState) => {
+      searching.value = loadingState;
+    });
 
     const displayView = ref(views.HOUSE);
+
+    const searching = ref(false);
 
     const years = ref([2008, 2010, 2012, 2014, 2016, 2018, 2020, 2022]);
 
@@ -162,6 +169,7 @@ export default {
       partyList,
       years,
       displayView,
+      searching,
       paginatedPartyList,
       getRandomColorCombination,
       partySelected,
