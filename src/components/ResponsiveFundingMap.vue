@@ -64,6 +64,8 @@ export default {
 
     // Listen to the Slider Min and Max selection Event from Slider Options component
     bus.on("searchFundingDataEvt", (sliderValue) => {
+      bus.emit("triggerLoadingStateEvt", true);
+
       fetchTransactionData(
         fundingYear.value.toString(),
         sliderValue.min,
@@ -73,6 +75,8 @@ export default {
 
     // Hoisting so Mounted lifecycle first
     onMounted(() => {
+      bus.emit("triggerLoadingStateEvt", true);
+
       // draw the map
       drawVisualization();
 
@@ -243,6 +247,9 @@ export default {
 
           // Assuming we only need to draw for fetched data on the Map
           updateVisualization(mergedData.value);
+
+          // Stop the loading state
+          bus.emit("triggerLoadingStateEvt", false);
         })
         .catch((error) => {
           console.error("Error fetching data:", error);
