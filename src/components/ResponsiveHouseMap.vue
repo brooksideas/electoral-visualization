@@ -233,7 +233,6 @@ export default {
         .get(url, { params })
         .then((response) => {
           // Handle the response data
-          console.log(response.data);
           const responseData = response.data;
           mergedData.value = data
             .filter((state) =>
@@ -245,8 +244,6 @@ export default {
               );
               return { ...state, ...responseEntry };
             });
-
-          console.log("mount axios data ->", mergedData.value);
 
           // Assuming we only need to draw for fetched data on the Map
           updateVisualization(mergedData.value);
