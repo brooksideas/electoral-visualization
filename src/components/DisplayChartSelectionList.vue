@@ -89,6 +89,7 @@ export default {
 
     const partySelected = (party) => {
       bus.emit("partyChartSelectionEvt", party);
+      bus.emit("triggerLoadingStateEvt", true);
     };
 
     const nextPage = () => {
