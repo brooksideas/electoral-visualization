@@ -70,6 +70,8 @@ export default {
 
     // Hoisting so Mounted lifecycle first
     onMounted(() => {
+      bus.emit("triggerLoadingStateEvt", true);
+
       // draw the empty map
       drawVisualization();
       // Define the query parameters
@@ -247,6 +249,9 @@ export default {
 
           // Assuming we only need to draw for fetched data on the Map
           updateVisualization(mergedData.value);
+
+          // Stop the loading state
+          bus.emit("triggerLoadingStateEvt", false);
         })
         .catch((error) => {
           console.error("Error fetching data:", error);
