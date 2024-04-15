@@ -68,6 +68,7 @@ export default {
       },
     }));
 
+    // On Mount populate with the LIBERAL data
     const chartData = reactive({
       labels: [
         1976, 1978, 1980, 1982, 1984, 1986, 1988, 1990, 1992, 1994, 1996, 1998,
@@ -126,6 +127,8 @@ export default {
 
           // Update the chart key to trigger a re-render
           chartKey.value += 1;
+
+          bus.emit("triggerLoadingStateEvt", false);
         })
         .catch((error) => {
           console.error("Error fetching data:", error);
