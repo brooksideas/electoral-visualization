@@ -42,7 +42,7 @@ export default {
         case views.FUNDING:
           return "Funding Data Visualization";
         case views.CHARTS:
-          return "Votes count Visualization";
+          return "Total Votes count Visualization";
       }
     });
 
