@@ -1,5 +1,5 @@
 /** @type {import('tailwindcss').Config} */
-const colors = require('tailwindcss/colors');
+const colors = require("tailwindcss/colors");
 export default {
   content: ["./index.html", "./src/**/*.{vue,js,ts,jsx,tsx}"],
   theme: {
@@ -290,6 +290,21 @@ export default {
           800: "#9f1239",
           900: "#881337",
           950: "#4c0519",
+        },
+      },
+      extend: {
+        animation: {
+          progress: "progress 1s infinite linear",
+        },
+        keyframes: {
+          progress: {
+            "0%": { transform: " translateX(0) scaleX(0)" },
+            "40%": { transform: "translateX(0) scaleX(0.4)" },
+            "100%": { transform: "translateX(100%) scaleX(0.5)" },
+          },
+        },
+        transformOrigin: {
+          "left-right": "0% 50%",
         },
       },
     },
