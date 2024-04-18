@@ -29,3 +29,15 @@ npm install
 ```
 npm run dev
 ```
+
+### Build the Project 
+
+```
+npm run build
+```
+
+
+### Deploy the Project on GitHub
+
+[How To Deploy Your Vue App to GitHub Pages.
+](https://learnvue.co/articles/deploy-vue-to-github-pages)
